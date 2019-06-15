@@ -56,9 +56,9 @@ def parse_response(response_data):
 
 
 if __name__ == '__main__':
-    api_client = RequestSender(
+    API_CLIENT = RequestSender(
         address='hacker-news.firebaseio.com/v0',
         schema='https'
     )
-    res_data = api_client.send_req(path='newstories.json')
-    parse_response(res_data)
+    RES_DATA = API_CLIENT.send_req(path='newstories.json')
+    parse_response(RES_DATA)
