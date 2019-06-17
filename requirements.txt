@@ -1,2 +1,4 @@
 requests
 pylint
+Sphinx
+sphinx-rtd-theme
