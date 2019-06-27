@@ -5,8 +5,12 @@
 .. Created on 2019-06-15
 """
 
-from src.api_interface import APIHandler
-from src.api_interface import NewStoriesAPI
+import sys
+from os.path import abspath, dirname, join, pardir
+
+sys.path.append(join(abspath(dirname(__file__)), pardir))
+
+from src.api_interface import APIHandler, NewStoriesAPI
 
 
 def parse_response(response_data):
