@@ -5,29 +5,57 @@
 .. Created on 2019-06-15
 """
 
+import logging
 import sys
 from os.path import abspath, dirname, join, pardir
 
 sys.path.append(join(abspath(dirname(__file__)), pardir))
 
-from src.api_interface import APIHandler, NewStoriesAPI
+from src.api_interface import APIHandler
+from src.options import OPTIONS
 
 
-def parse_response(response_data):
+def get_cfg(cfg_label, cfg_dict):
     """
-    Process response from web API
+    Get requested configuration from given dictionary or raise an exception.
 
-    :param dict response_data:
-        Raw json data returned by web API
+    :param cfg_label:
+        Label of configuration to get
+    :param dict cfg_dict:
+        Dictionary with all configurations available
+    :raises: At
+    :return: Config from given structure
+    :rtype: dict
     """
-    print(len(response_data), response_data)
+    tmp_cfg = cfg_dict.get(cfg_label)
+    if tmp_cfg is None:
+        raise AttributeError("No configuration for '{}'".format(cfg_label))
+    return tmp_cfg
+
+
+class Runner:
+    """Base class for this whole service."""
+
+    def __init__(self, **kwargs):
+        self._logger = logging.getLogger(self.__class__.__name__)
+        api_cfg = get_cfg('api_services', kwargs)
+
+        stories_cfg = get_cfg('new_stories', api_cfg)
+        self.stories_api = APIHandler(**stories_cfg)
+
+    def get_stories(self):
+        """Get all new stories"""
+        response_data = self.stories_api.get_api_data()
+        self._logger.info("%d records: %s", len(response_data), response_data)
 
 
 if __name__ == '__main__':
-    API_CLIENT = APIHandler(
-        worker=NewStoriesAPI(),
-        address='hacker-news.firebaseio.com/v0',
-        schema='https'
-    )
-    RES_DATA = API_CLIENT.get_api_data()
-    parse_response(RES_DATA)
+    logging.basicConfig(**OPTIONS['logger'])
+    try:
+        RUNNER = Runner(**OPTIONS)
+        RUNNER.get_stories()
+    except KeyboardInterrupt:
+        logging.error("Service terminated")
+    except Exception as e_msg:
+        logging.error('Unhandled exception')
+        logging.exception(e_msg)

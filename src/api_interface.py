@@ -5,6 +5,7 @@
 .. Created on:: 2019-06-16
 """
 
+import logging
 import requests
 from abc import ABC, abstractmethod
 
@@ -46,18 +47,12 @@ class APIHandler:
         Worker to be used for new instance of this class
     :param str address:
         URL of web service
-    :param int port:
-        Port of web service. This argument is optional
-    :param str schema:
-        Schema of web service. HTTP is default
     """
 
-    def __init__(self, worker, address, port=None, schema="http"):
+    def __init__(self, worker, address):
+        self._logger = logging.getLogger(self.__class__.__name__)
         self.worker = worker
-        tmp_port = ":{}".format(port) if port is not None else ""
-        self._api_address = "{schema}://{address}{port}".format(
-            schema=schema, address=address, port=tmp_port
-        )
+        self._api_address = address
 
     def get_api_data(self, payload=None):
         """
@@ -68,4 +63,5 @@ class APIHandler:
         :return:
             API response
         """
+        self._logger.info('Sending request to %s', self._api_address)
         return self.worker.send_req(self._api_address, payload)
