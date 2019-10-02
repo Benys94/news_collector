@@ -46,7 +46,8 @@ class Runner:
     def get_stories(self):
         """Get all new stories"""
         response_data = self.stories_api.get_api_data()
-        self._logger.info("%d records: %s", len(response_data), response_data)
+        self._logger.info("Received %d records", len(response_data))
+        self._logger.debug("News: %s", response_data)
 
 
 if __name__ == '__main__':
