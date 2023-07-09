@@ -4,3 +4,5 @@
 [![Documentation Status](https://readthedocs.org/projects/news-collector/badge/?version=latest)](https://news-collector.readthedocs.io/en/latest/?badge=latest)
 
 Collects new from HackerNews service.
+
+Test
